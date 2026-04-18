@@ -109,7 +109,6 @@
         }
         .feedback-toast.correct  { background: #14532d; color: #86efac; border: 1px solid #166534; }
         .feedback-toast.incorrect{ background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
-        .feedback-toast.timeout  { background: #431407; color: #fed7aa; border: 1px solid #9a3412; }
         /* wrapper centres the toast in the stimulus box (normal mode) */
         #feedbackWrap {
             position: absolute; inset: 0;
@@ -183,7 +182,6 @@
             flex: 0.6; background: #1e1b4b; color: #a5b4fc;
             font-size: 14px; padding: 18px 8px;
         }
-        .touch-btn.no-mercy-lit { background: #7c2d12 !important; color: #fdba74 !important; }
         .av-speaking {
             display: inline-flex; align-items: center; gap: 8px;
             color: #a855f7; font-size: 32px; font-style: italic;
@@ -247,7 +245,6 @@
     <!-- Audio elements for sound feedback -->
     <audio id="audioCorrect" preload="auto"></audio>
     <audio id="audioIncorrect" preload="auto"></audio>
-    <audio id="audioTimeout" preload="auto"></audio>
 
     <div id="app">
 
@@ -311,10 +308,10 @@
                 <div id="multiModeRules" class="hidden" style="margin-top:12px; padding:14px; background-color:#0a0718; border-radius:8px; border:1px solid #2d1f4e;">
                     <div style="font-weight:600; margin-bottom:8px; color:#c084fc;">Rules to include:</div>
                     <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:7px; font-size:14px;">
-                        <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="PHYSICAL" checked><span>📝 Physical Property <span style="font-size:10px;color:#4ade80;">(suggested)</span></span></label>
                         <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="MEANING" checked><span>🔢 Meaning / Value <span style="font-size:10px;color:#4ade80;">(suggested)</span></span></label>
                         <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="SEMANTIC" checked><span>🔗 Semantic Relation <span style="font-size:10px;color:#4ade80;">(suggested)</span></span></label>
                         <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="SYNONYMS" checked><span>📚 Synonyms <span style="font-size:10px;color:#4ade80;">(suggested)</span></span></label>
+                        <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="PHYSICAL"><span>📝 Physical Property <span style="font-size:10px;color:#4ade80;">(suggested)</span></span></label>
                         <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="ANTONYMS"><span>🔄 Antonyms</span></label>
                         <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="COLOR"><span>🌈 Color (visual)</span></label>
                         <label class="checkbox-group"><input type="checkbox" class="rule-checkbox" data-rule="COLORNAME"><span>🎨 Color Association</span></label>
@@ -405,7 +402,7 @@
 
                     <div class="setting-row">
                         <div class="setting-label">🏛️ Roman Numerals <span style="font-size:12px; font-weight:400; color:#9ca3af;">(Classic)</span></div>
-                        <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="romanNumerals"><label for="romanNumerals">Include Roman numerals</label></div>
+                        <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="romanNumerals" checked><label for="romanNumerals">Include Roman numerals</label></div>
                         <div class="setting-desc">Adds I, V, X… as a third format alongside Arabic and written words.</div>
                     </div>
 
@@ -424,19 +421,11 @@
                         </div>
                     </div>
 
-                    <div class="setting-row">
-                        <div class="setting-label">✓ Feedback Duration: <span id="feedbackDurationValue">200</span>ms</div>
-                        <div class="setting-desc">How long the Correct / Incorrect banner stays on screen.</div>
-                        <input type="range" id="feedbackDuration" min="10" max="1500" value="200" step="10" style="width:100%; margin-top:6px;">
-                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:3px;">
-                            <span>10ms</span><span>500ms (standard)</span><span>1500ms</span>
-                        </div>
-                    </div>
 
                     <div class="setting-row">
                         <div class="setting-label">🔊 Sound Effects</div>
                         <div class="checkbox-group" style="margin-bottom:6px;"><input type="checkbox" id="soundEffects" checked><label for="soundEffects">Enable sound feedback</label></div>
-                        <div class="setting-desc" style="margin-bottom:8px;">Audio tones for correct, wrong, and timeout feedback.</div>
+                        <div class="setting-desc" style="margin-bottom:8px;">Audio tones for correct and incorrect feedback.</div>
                         <div style="font-weight:600; font-size:13px; margin-bottom:6px; color:#c084fc;">Sound Theme:</div>
                         <div style="display:flex; flex-wrap:wrap; gap:6px;" id="soundThemeBtns">
                             <div class="mode-button active" data-theme="soft" style="font-size:12px; padding:7px 12px; flex:none;">Soft</div>
@@ -448,7 +437,6 @@
                         <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
                             <button id="previewCorrect" class="button exit-button" style="font-size:12px; padding:5px 12px;">▶ Correct</button>
                             <button id="previewIncorrect" class="button exit-button" style="font-size:12px; padding:5px 12px;">▶ Incorrect</button>
-                            <button id="previewTimeout" class="button exit-button" style="font-size:12px; padding:5px 12px;">▶ Timeout</button>
                         </div>
                     </div>
 
@@ -474,29 +462,6 @@
                     </div>
 
                     <div class="setting-row">
-                        <div class="setting-label">⏳ Results Screen Delay: <span id="resultsDelayValue">1.5</span>s</div>
-                        <div class="setting-desc">How long to wait after a round ends before Space / ESC / buttons work on the results screen. Prevents accidental dismissal.</div>
-                        <input type="range" id="resultsDelaySlider" min="0" max="5" value="1.5" step="0.5" style="width:100%; margin-top:6px;">
-                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:3px;">
-                            <span>0s (instant)</span><span>1.5s (default)</span><span>5s</span>
-                        </div>
-                    </div>
-
-                    <div class="setting-row">
-                        <div class="setting-label">😈 No Mercy Mode</div>
-                        <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="noMercyMode"><label for="noMercyMode">Penalise button-mashing — prevents pressing both keys</label></div>
-                        <div class="setting-desc">If you press a correct key then immediately press the opposite key, the answer is retroactively marked <strong style="color:#f87171;">Incorrect</strong>. Prevents "press both" hedging.</div>
-                        <div id="noMercySettings" class="hidden" style="margin-top:8px; padding-left:26px;">
-                            <label style="font-weight:600; font-size:13px;">Grace window: <span id="noMercyWindowValue">200ms</span></label>
-                            <div class="setting-desc" style="margin:3px 0 6px;">Second keypress within this window triggers the penalty.</div>
-                            <input type="range" id="noMercyWindow" min="100" max="1000" value="200" step="50" style="width:100%;">
-                            <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:3px;">
-                                <span>100ms (lenient)</span><span>200ms</span><span>1000ms (strict)</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="setting-row">
                         <div class="setting-label">⚡ Rapid Fire Mode</div>
                         <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="rapidFireMode"><label for="rapidFireMode">Skip Space bar between trials</label></div>
                         <div class="setting-desc">Trials auto-advance without pressing Space.</div>
@@ -510,20 +475,26 @@
                     </div>
 
                     <div class="setting-row">
+                        <div class="setting-label">🎓 Tutorial Mode</div>
+                        <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="tutorialMode"><label for="tutorialMode">No time limit — stimulus stays until you respond</label></div>
+                        <div class="setting-desc">Removes the response window entirely. F or J (or Esc) are the only ways to advance. Useful for learning the rules without time pressure.</div>
+                    </div>
+
+                    <div class="setting-row">
                         <div class="setting-label">👁️ Eye Training — Saccadic &amp; UFOV</div>
                         <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="saccadicMode"><label for="saccadicMode">Enable eye training mode (full-screen)</label></div>
                         <div class="setting-desc">Stimuli reposition across the screen. <strong>Wide band</strong> = saccadic training (shift your gaze). <strong>Narrow band</strong> = UFOV training (fix your gaze on the centre dot, read in periphery).</div>
                         <div id="saccadicSettings" class="hidden" style="margin-top:10px; padding-left:26px; display:flex; flex-direction:column; gap:10px;">
                             <div>
-                                <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Spawn Band Width: <span id="saccadicBandwidthValue">100%</span></div>
+                                <div style="font-weight:600; font-size:14px; margin-bottom:4px;">Spawn Band Width: <span id="saccadicBandwidthValue">30%</span></div>
                                 <div style="font-size:12px; color:#9ca3af; margin-bottom:6px;">How far from the centre stimuli can appear. Low = UFOV training (read in periphery). High = saccadic training (move your gaze to find them).</div>
-                                <input type="range" id="saccadicBandwidth" min="5" max="100" value="100" step="5" style="width:100%;">
+                                <input type="range" id="saccadicBandwidth" min="5" max="100" value="30" step="5" style="width:100%;">
                                 <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:3px;">
                                     <span>5% — centre (UFOV)</span><span>50%</span><span>100% — full screen (saccadic)</span>
                                 </div>
                             </div>
                             <div>
-                                <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="saccadicRandomize"><label for="saccadicRandomize">Randomize within bounds</label></div>
+                                <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="saccadicRandomize" checked><label for="saccadicRandomize">Randomize within bounds</label></div>
                                 <div class="setting-desc">Off (default): stimuli appear near the outer edge of the band. On: stimuli appear anywhere within the band.</div>
                             </div>
                             <div>
@@ -539,6 +510,11 @@
                                         <label style="font-size:13px; font-weight:600; min-width:60px;">Colour:</label>
                                         <input type="color" id="fixationDotColor" value="#ff0000" style="width:40px; height:28px; border:none; background:none; cursor:pointer; padding:0;">
                                         <span style="font-size:12px; color:#9ca3af;">default red</span>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:13px; font-weight:600; margin-bottom:4px;">Size: <span id="fixationDotSizeValue">12</span>px</div>
+                                        <input type="range" id="fixationDotSize" min="4" max="40" value="12" step="2" style="width:100%;">
+                                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:2px;"><span>4px (tiny)</span><span>12px (default)</span><span>40px (large)</span></div>
                                     </div>
                                     <div>
                                         <div class="checkbox-group" style="margin-bottom:4px;"><input type="checkbox" id="fixationDotPulse"><label for="fixationDotPulse">Pulsating dot</label></div>
@@ -605,6 +581,32 @@
                     <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:4px;">
                         <span>1200ms (Easy)</span><span>600ms (Medium)</span><span>25ms (Extreme)</span>
                     </div>
+                    <!-- Micro-adaptation sub-setting -->
+                    <div style="margin-top:14px; padding:12px; background:#0a0718; border-radius:8px; border:1px solid #2d1f4e;">
+                        <div class="checkbox-group" style="margin-bottom:6px;">
+                            <input type="checkbox" id="microAdaptMode">
+                            <label for="microAdaptMode" style="font-weight:600; color:#c084fc;">⚡ Micro-Adaptation Mode</label>
+                        </div>
+                        <div class="setting-desc" style="margin-bottom:8px;">The response window shrinks on every correct answer and grows on every miss or incorrect — continuously adapting to your current speed. The live window is remembered across rounds and sessions.</div>
+                        <div id="microAdaptSettings" class="hidden" style="display:flex; flex-direction:column; gap:8px; padding-left:4px; margin-top:6px;">
+                            <div>
+                                <div style="font-size:13px; font-weight:600; color:#4ade80;">✓ Correct → <span id="microAdaptCorrectValue">−3</span>ms</div>
+                                <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">How much time is removed after each correct response. (Drag right = bigger decrease = harder)</div>
+                                <input type="range" id="microAdaptCorrect" min="0" max="50" value="3" step="1" style="width:100%;">
+                                <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:2px;"><span>0ms</span><span>25ms</span><span>50ms</span></div>
+                            </div>
+                            <div>
+                                <div style="font-size:13px; font-weight:600; color:#f87171;">✗ Incorrect / Missed → +<span id="microAdaptIncorrectValue">5</span>ms</div>
+                                <div style="font-size:11px; color:#9ca3af; margin-bottom:4px;">How much time is added after each miss or wrong answer.</div>
+                                <input type="range" id="microAdaptIncorrect" min="0" max="100" value="5" step="1" style="width:100%;">
+                                <div style="display:flex; justify-content:space-between; font-size:11px; color:#9ca3af; margin-top:2px;"><span>0ms</span><span>50ms</span><span>100ms</span></div>
+                            </div>
+                            <div style="font-size:12px; color:#9ca3af; background:#060412; padding:6px 10px; border-radius:6px; border:1px solid #1a1230;">
+                                Live window: <strong id="microAdaptCurrentDisplay" style="color:#c084fc;">—</strong>ms &nbsp;·&nbsp;
+                                <button id="microAdaptReset" class="button exit-button" style="font-size:11px; padding:3px 8px; display:inline-block;">Reset to base</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="info-box">
@@ -670,7 +672,7 @@
                     </div>
                 </div>
                 <div style="text-align:center; color:#9ca3af; font-size:14px;">
-                    <p>Press <strong style="color:#e8e8e8;">F</strong> = No &nbsp;|&nbsp; <strong style="color:#e8e8e8;">J</strong> = Yes &nbsp;|&nbsp; <strong style="color:#e8e8e8;">Space</strong> = Next &nbsp;<span id="noMercyIndicator" class="hidden" style="color:#f97316; font-size:12px;">⚠ No Mercy ON</span></p>
+                    <p>Press <strong style="color:#e8e8e8;">F</strong> = No &nbsp;|&nbsp; <strong style="color:#e8e8e8;">J</strong> = Yes &nbsp;|&nbsp; <strong style="color:#e8e8e8;">Space</strong> = Next</p>
                 </div>
             </div>
         </div>
@@ -775,6 +777,59 @@
 // Roman Numerals, Training Timer, Daily Goal, Import/Export Settings
 // ============================================================================
 
+
+// =============================================================================
+// ADAPTIVE POSNER TASK — Source Annotations (v38+)
+// =============================================================================
+// PURPOSE
+//   A Posner-task variant that simultaneously trains two skills:
+//   1. Semantic long-term memory retrieval (LTMR) — fast recall of word/concept
+//      relationships: synonyms, antonyms, semantic association, physical/numeric
+//      properties.
+//   2. Eye-movement — either saccadic training (wide spawn band, gaze must travel
+//      to find stimuli) or UFOV/useful-field-of-view training (narrow spawn band,
+//      stimuli near centre, gaze stays fixed on dot while periphery is used).
+//
+// ARCHITECTURE (all in one HTML file, zero dependencies)
+//   SoundSystem     — Web Audio API tone synthesis. 5 themes. No audio files.
+//   SpeechSystem    — Web Speech API TTS for audio-visual mode.
+//   GameState       — All settings + per-session data. Persists to localStorage.
+//   TrialGenerator  — Generates one Trial object per call. Maintains dedup queue.
+//   UIController    — All DOM manipulation: screens, stimuli, feedback, banners.
+//   GameController  — Top-level orchestrator: session flow, key/touch handling.
+//
+// KEY DESIGN DECISIONS
+//   • No timeout mechanic: there is no response deadline per trial. The stimulus
+//     stays on screen until the user presses F or J. This eliminates all "Too Slow"
+//     false-positive edge cases entirely.
+//   • Space gate (_spaceEnabled): set TRUE only inside nextTrial() after the
+//     rule screen is displayed. Cleared as FIRST LINE of startTrialSequence().
+//     Touch buttons and keyboard both check this flag. No other code sets it.
+//   • 50/50 match balance: word-rule pools are sampled by first flipping a coin
+//     (match vs non-match), then drawing from the corresponding sub-pool.
+//     This prevents J-bias when match pairs vastly outnumber non-match pairs.
+//   • Browser Space-button bug: pressing Space fires click() on focused <button>
+//     elements (browser default). Fixed by: (a) e.preventDefault() on every
+//     Space keydown while task screen is active, (b) tabindex="-1" on start
+//     button, (c) document.activeElement.blur() at session start.
+//
+// TRIAL FLOW (one trial):
+//   nextTrial() → shows rule card → user presses Space
+//   → startTrialSequence() → fixation cross (fixationDuration ms)
+//   → displayStimulus() → awaits F/J (no deadline)
+//   → handleResponse(key) → showFeedback() → _sleep(300) → nextTrial()
+//
+// SETTINGS PERSISTENCE:
+//   GameState.saveToStorage() / loadFromStorage() JSON in localStorage.
+//   Key: "adaptivePosnerState". Export/import via base64 share string.
+//   loadFromStorage() strips obsolete rule keys (e.g. SIZE) to prevent crashes.
+// =============================================================================
+
+// ─── DIFFICULTY_LEVELS ───────────────────────────────────────────────────────
+// Each entry defines a level number (used as GameState.currentLevel) and a
+// response window in ms. Adaptive mode auto-promotes (≥90% acc) or demotes
+// (<60% acc) at the end of each 32-trial round. Manual and Custom modes bypass
+// this. Per-rule time offsets (ruleTimeOffsets) are added on top of duration.
 const DIFFICULTY_LEVELS = [
     { level: 1,   duration: 1200 }, { level: 2,   duration: 1100 },
     { level: 3,   duration: 1000 }, { level: 4,   duration: 900  },
@@ -785,6 +840,16 @@ const DIFFICULTY_LEVELS = [
     { level: 10,  duration: 300  }
 ];
 
+
+// ─── RULES ───────────────────────────────────────────────────────────────────
+// Maps rule key → {name, description, emoji}. Used by UIController for display.
+// Classic mode uses only PHYSICAL and MEANING (alternating).
+// Multi mode uses any subset of all rules (user-configurable checkboxes).
+// Audio-Visual mode uses only MEANING (one stimulus spoken, one shown).
+// Rule keys: PHYSICAL, MEANING, SEMANTIC, SYNONYMS, ANTONYMS, COLOR, COLORNAME,
+//   PARITY, MODULO3, PRIME, CROSSSUM, DIVISIBLE5, GREATER10.
+// NOTE: SIZE was previously a rule and is now removed. loadFromStorage() strips
+// it from saved enabledRules to avoid crashes on older saves.
 const RULES = {
     PHYSICAL:  { name: "Physical Property Rule",    description: "Same format? (J=Yes, F=No)",        shortName: "Same Format?",   emoji: "📝" },
     MEANING:   { name: "Meaning Rule",              description: "Same number? (J=Yes, F=No)",        shortName: "Same Meaning?",  emoji: "🔢" },
@@ -826,6 +891,21 @@ const NUMBER_WORDS_LANGUAGES = {
 };
 const ROMAN_NUMERALS = { 1:'I',2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII',13:'XIII',14:'XIV',15:'XV',16:'XVI',17:'XVII',18:'XVIII',19:'XIX',20:'XX' };
 
+
+// ─── WORD_PAIRS ──────────────────────────────────────────────────────────────
+// Used by SEMANTIC rule. Each entry: {word1, word2, related:bool, tricky?:bool}
+//   related:true  → correct answer is J (yes, they are semantically related)
+//   related:false → correct answer is F (not related / compound-word trap)
+//   tricky:true   → only shown when "Tricky foils" subset is enabled in settings
+//
+// IMPORTANT — 50/50 BALANCE:
+//   TrialGenerator samples match and non-match pools SEPARATELY (50/50 coin flip
+//   decides which pool to draw from). Do NOT rely on raw counts being equal.
+//   With tricky=OFF, nearly all non-match pairs are tricky:true and thus hidden,
+//   but the 50/50 sampling still guarantees balance because we pick pool first.
+//
+// Standard non-match pairs (no tricky tag) are safe compound-word traps that
+// look related at a glance but share no semantic relationship.
 const WORD_PAIRS = [
     // ── RELATED — STANDARD (J=Yes, easy) ──────────────────────────────────────
     {word1:'doctor',word2:'nurse',related:true},
@@ -962,6 +1042,12 @@ const WORD_PAIRS = [
     {word1:'stone',word2:'wall',related:false},
 ];
 
+
+// ─── SYNONYMS_PAIRS ──────────────────────────────────────────────────────────
+// Used by SYNONYMS rule. {word1, word2, isSynonym:bool, tricky?:bool}
+// Standard (non-tricky) entries are shown always; tricky entries only with
+// "Tricky foils" on. Non-synonym foils include antonym bait and near-synonyms.
+// Pool is sampled 50/50 match vs non-match (same mechanism as WORD_PAIRS).
 const SYNONYMS_PAIRS = [
     // ── TRUE SYNONYMS — STANDARD (J=Yes) ──────────────────────────────────────
     {word1:'ocean',word2:'sea',isSynonym:true},
@@ -1133,6 +1219,12 @@ const SYNONYMS_PAIRS = [
     {word1:'kind',word2:'weak',isSynonym:false,tricky:true},
 ];
 
+
+// ─── ANTONYMS_PAIRS ──────────────────────────────────────────────────────────
+// Used by ANTONYMS rule. {word1, word2, isAntonym:bool, tricky?:bool}
+// Non-antonym foils are synonym-bait (things that sound like they could be
+// antonyms but are actually synonyms or related, e.g. hot/warm).
+// Abstract concept pairs (utopia/dystopia, liberty/tyranny) add depth.
 const ANTONYMS_PAIRS = [
     // ── TRUE ANTONYMS — STANDARD (J=Yes) ──────────────────────────────────────
     {word1:'hot',word2:'cold',isAntonym:true},
@@ -1277,6 +1369,12 @@ const ANTONYMS_PAIRS = [
 
 // Color-association pairs: words that evoke the same colour (isColorMatch:true) or different colours (false)
 // Every word that appears in a match pair also appears in a cross-colour foil
+
+// ─── COLORNAME_PAIRS ─────────────────────────────────────────────────────────
+// Used by COLORNAME rule. {word1, word2, isColorMatch:bool, tricky?:bool}
+// isColorMatch:true → both words evoke the same colour (e.g. lemon/banana=yellow)
+// Every word that appears in a match pair also appears in a cross-colour foil
+// to prevent simple word-memorisation strategies.
 const COLORNAME_PAIRS = [
     // ── SAME COLOUR (J=Yes) ───────────────────────────────────────────────────
     // Yellow
@@ -1358,6 +1456,14 @@ const COLORNAME_PAIRS = [
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────────────────
+
+// ─── HELPER FUNCTIONS ────────────────────────────────────────────────────────
+// formatNumber(num, format, language): converts integer to display string.
+//   format = 'arabic' | 'written' | 'roman'
+//   language = 'english' | 'german' | 'spanish' | ... (18 languages supported)
+// getRandomInt(min, max): inclusive random integer.
+// isPrime(n): used by PRIME rule.
+// getCrossSum(n): digit sum, used by CROSSSUM rule.
 function formatNumber(num, format, language='english') {
     if (!num || num < 1 || num > 20) return String(num);
     switch(format) {
@@ -1378,6 +1484,13 @@ function formatDuration(seconds){
 }
 
 // ─── Sound System ──────────────────────────────────────────────────────────
+
+// ─── SoundSystem ─────────────────────────────────────────────────────────────
+// Synthesises feedback tones via Web Audio API (no audio files needed).
+// 5 themes: soft, classic, retro, sharp, minimal. Each theme has 2 sounds:
+//   playCorrect(), playIncorrect()
+// Sounds are previewed in settings. Theme stored in GameState.soundTheme.
+// sounds.enabled mirrors GameState.soundEffects (toggled in settings).
 class SoundSystem {
     constructor() {
         this.ctx = null;
@@ -1452,29 +1565,15 @@ class SoundSystem {
                 this._playTone(220, 'sawtooth', 0.2, 0.3);
         }
     }
-    playTimeout() {
-        if (!this.enabled) return;
-        switch(this.theme) {
-            case 'soft':
-                this._playTone(350, 'sine', 0.2, 0.12);
-                break;
-            case 'retro':
-                this._playTone(250, 'square', 0.12, 0.15);
-                this._playTone(200, 'square', 0.1, 0.12, 0.1);
-                break;
-            case 'sharp':
-                this._playTone(400, 'sawtooth', 0.12, 0.18);
-                break;
-            case 'minimal':
-                this._playTone(320, 'sine', 0.08, 0.1);
-                break;
-            default: // classic
-                this._playTone(300, 'triangle', 0.15, 0.25);
-        }
-    }
 }
 
 // ─── Speech System (Audio-Visual Mode) ────────────────────────────────────
+
+// ─── SpeechSystem ────────────────────────────────────────────────────────────
+// Wraps Web Speech API for Audio-Visual mode. In AV mode, one of the two
+// stimuli is spoken aloud (either the first or second, randomly per trial).
+// Requires browser SpeechSynthesis support. Falls back silently if unavailable.
+// speech.rate controlled by settings slider. cancel() stops mid-utterance.
 class SpeechSystem {
     constructor() {
         this.synth = window.speechSynthesis || null;
@@ -1495,6 +1594,36 @@ class SpeechSystem {
 }
 
 // ─── Game State ────────────────────────────────────────────────────────────
+
+// ─── GameState ───────────────────────────────────────────────────────────────
+// Single source of truth for ALL settings and live session data.
+//
+// KEY FIELDS (settings, persisted to localStorage):
+//   contentMode      'classic'|'multi'|'audiovisual'
+//   difficultyMode   'adaptive'|'manual'|'custom'
+//   currentLevel     float matching a DIFFICULTY_LEVELS entry
+//   customTime       ms for response window in custom mode (default 500)
+//   saccadicMode     bool — enables full-screen stimulus positioning
+//   saccadicBandwidth 5–100 — % of usable screen the spawn band covers
+//                    Default 30 (good for UFOV/gentle saccadic intro)
+//   saccadicRandomize bool — if false (default): stimuli near band edge
+//                    if true: anywhere within the band
+//   fixationDuration ms for the + cross before each stimulus (default 100)
+//   enabledRules     {PHYSICAL:bool, MEANING:bool, ...} — active rules in multi
+//                    Default: MEANING/SEMANTIC/SYNONYMS on, PHYSICAL suggested off
+//   ruleSubsets      {SEMANTIC:{standard,tricky}, ...} — foil difficulty per rule
+//   ruleTimeOffsets  {PHYSICAL:0, MEANING:0, ...} — ms added to window per rule
+//   matchPercentage  0–100 — for number rules only (word rules always 50/50)
+//   enabledLanguages {english:bool, german:bool, ...} — active number languages
+//
+// KEY FIELDS (live session, reset each round):
+//   currentTrial     1-indexed counter; >TRIALS_PER_SESSION triggers endSession
+//   keyboardEnabled  bool — gates all key/touch input; false during transitions
+//   correctCount, errorCount, totalReactionTime, correctReactionTime
+//   trials           array of Trial objects for results/history
+//
+// PERSISTENCE: saveToStorage() / loadFromStorage() via JSON in localStorage.
+// EXPORT/IMPORT: encodeSettings() / importSettings() via base64 share string.
 class GameState {
     constructor() {
         this.contentMode = 'classic';
@@ -1507,14 +1636,14 @@ class GameState {
         this.numberRange = 10;
         this.showErrors = true;
         this.fixationDuration = 100;
-        this.feedbackDuration = 200;
         this.inverseMode = false;
         this.saccadicMode = true;
-        this.saccadicBandwidth = 100; // 5–100 percent of usable screen
-        this.saccadicRandomize = false; // false = spawn at band edge, true = random within band
+        this.saccadicBandwidth = 30; // default 30% — good starting point for UFOV/saccadic
+        this.saccadicRandomize = true; // default on: randomize within bounds
         this.saccadicFontSize = 60;
         this.fixationDotEnabled = false;
         this.fixationDotColor = '#ff0000';
+        this.fixationDotSize = 12;
         this.fixationDotPulse = false;
         this.fixationDotPulseRate = 1.0;
         this.customTime = 500;
@@ -1522,10 +1651,14 @@ class GameState {
         this.soundTheme = 'soft';
         this.speechRate = 1.5;
         this.matchPercentage = 50;
-        this.romanNumerals = false;
+        this.romanNumerals = true;
         this.dailyGoal = 0;
+        // Micro-adaptation settings (only active in custom ms mode)
+        this.microAdaptMode = false;
+        this.microAdaptCorrect = 3;   // ms removed per correct answer
+        this.microAdaptIncorrect = 5; // ms added per miss/incorrect
         this.enabledRules = {
-            PHYSICAL:true, MEANING:true, SEMANTIC:true, SYNONYMS:true, ANTONYMS:false,
+            PHYSICAL:false, MEANING:true, SEMANTIC:true, SYNONYMS:true, ANTONYMS:false,
             COLOR:false, COLORNAME:false, PARITY:false, MODULO3:false, PRIME:false,
             CROSSSUM:false, DIVISIBLE5:false, GREATER10:false
         };
@@ -1549,14 +1682,12 @@ class GameState {
         this.rapidFireMode = false;
         this.rapidFireTrials = 1;
         this.warmUpMode = false;
-        this.resultsDelay = 1.5; // seconds before Space/ESC work on results screen
-        this.noMercyMode = false;
-        this.noMercyWindow = 200;
+        this.tutorialMode = false;
+        this.awaitingResponse = false;
+        this.microAdaptCurrentMs = null; // null = use customTime as starting value
         this.trials = [];
         this.sessionStartTime = null;
         this.currentTrialStartTime = null;
-        this.awaitingResponse = false;
-        this.responseTimeout = null;
         this.keyboardEnabled = true;
         this.roundsThisSession = 0;
         this.totalReactionTime = 0;
@@ -1566,35 +1697,38 @@ class GameState {
     reset() {
         this.currentTrial = 0; this.correctCount = 0; this.errorCount = 0;
         this.consecutiveFailures = 0; this.trials = [];
-        this.sessionStartTime = Date.now(); this.awaitingResponse = false;
-        this.clearResponseTimeout(); this.keyboardEnabled = true;
+        this.sessionStartTime = Date.now();
+        this.awaitingResponse = false;
+        this.keyboardEnabled = true;
         this.totalReactionTime = 0; this.correctReactionTime = 0;
-    }
-
-    clearResponseTimeout() {
-        if (this.responseTimeout) { clearTimeout(this.responseTimeout); this.responseTimeout = null; }
     }
 
     saveToStorage() {
         try {
             localStorage.setItem('posner_currentLevel', String(this.currentLevel));
+            localStorage.setItem('posner_customTime', String(this.customTime));
+            if(this.microAdaptCurrentMs !== null) {
+                localStorage.setItem('posner_microAdaptMs', String(this.microAdaptCurrentMs));
+            }
             const settings = {
                 numberRange:this.numberRange, showErrors:this.showErrors,
-                fixationDuration:this.fixationDuration, feedbackDuration:this.feedbackDuration,
+                fixationDuration:this.fixationDuration,
                 inverseMode:this.inverseMode, saccadicMode:this.saccadicMode,
                 saccadicBandwidth:this.saccadicBandwidth, saccadicRandomize:this.saccadicRandomize,
                 saccadicFontSize:this.saccadicFontSize,
                 fixationDotEnabled:this.fixationDotEnabled, fixationDotColor:this.fixationDotColor,
+                fixationDotSize:this.fixationDotSize,
                 fixationDotPulse:this.fixationDotPulse, fixationDotPulseRate:this.fixationDotPulseRate,
                 contentMode:this.contentMode, difficultyMode:this.difficultyMode,
                 customTime:this.customTime, enabledRules:this.enabledRules,
                 enabledLanguages:this.enabledLanguages, ruleTimeOffsets:this.ruleTimeOffsets,
                 ruleSubsets:this.ruleSubsets,
                 rapidFireMode:this.rapidFireMode, rapidFireTrials:this.rapidFireTrials,
-                warmUpMode:this.warmUpMode, resultsDelay:this.resultsDelay, noMercyMode:this.noMercyMode,
-                noMercyWindow:this.noMercyWindow, soundEffects:this.soundEffects,
+                warmUpMode:this.warmUpMode, tutorialMode:this.tutorialMode, soundEffects:this.soundEffects,
                 matchPercentage:this.matchPercentage, romanNumerals:this.romanNumerals,
-                dailyGoal:this.dailyGoal, speechRate:this.speechRate, soundTheme:this.soundTheme
+                dailyGoal:this.dailyGoal, speechRate:this.speechRate, soundTheme:this.soundTheme,
+                microAdaptMode:this.microAdaptMode, microAdaptCorrect:this.microAdaptCorrect,
+                microAdaptIncorrect:this.microAdaptIncorrect
             };
             localStorage.setItem('posner_settings', JSON.stringify(settings));
         } catch(e) { console.error('Save failed:', e); }
@@ -1604,28 +1738,34 @@ class GameState {
         try {
             const lvl = localStorage.getItem('posner_currentLevel');
             if (lvl) { this.currentLevel = parseFloat(lvl); if(this.currentLevel<1)this.currentLevel=1; if(this.currentLevel>10)this.currentLevel=10; }
+            // customTime has its own key — survives settings resets, remembered across sessions
+            const savedCustomTime = localStorage.getItem('posner_customTime');
+            if(savedCustomTime) this.customTime = parseInt(savedCustomTime)||500;
+            // Micro-adaptation live window persists across sessions independently
+            const savedMicroMs = localStorage.getItem('posner_microAdaptMs');
+            if(savedMicroMs) this.microAdaptCurrentMs = parseFloat(savedMicroMs);
             const raw = localStorage.getItem('posner_settings');
             if (raw) {
                 const s = JSON.parse(raw);
                 this.numberRange = s.numberRange||10;
                 this.showErrors = s.showErrors!==undefined?s.showErrors:true;
                 this.fixationDuration = s.fixationDuration!==undefined ? s.fixationDuration : 100;
-                this.feedbackDuration = s.feedbackDuration!==undefined ? s.feedbackDuration : 200;
                 this.inverseMode = s.inverseMode||false;
                 this.saccadicMode = s.saccadicMode!==undefined?s.saccadicMode:true;
                 this.saccadicBandwidth = s.saccadicBandwidth!==undefined ? s.saccadicBandwidth : (s.saccadicDifficulty ? Math.round(s.saccadicDifficulty/5*100) : 100);
-                this.saccadicRandomize = s.saccadicRandomize||false;
+                this.saccadicRandomize = s.saccadicRandomize!==undefined?s.saccadicRandomize:true;
                 this.saccadicFontSize = s.saccadicFontSize||60;
                 this.fixationDotEnabled = s.fixationDotEnabled||false;
                 this.fixationDotColor = s.fixationDotColor||'#ff0000';
+                this.fixationDotSize = s.fixationDotSize||12;
                 this.fixationDotPulse = s.fixationDotPulse||false;
                 this.fixationDotPulseRate = s.fixationDotPulseRate||1.0;
                 this.contentMode = s.contentMode||'classic';
                 this.difficultyMode = s.difficultyMode||'adaptive';
-                this.customTime = s.customTime||600;
+                // dedicated key takes priority over settings blob for customTime
+                if(!savedCustomTime) this.customTime = s.customTime||500;
                 if(s.enabledRules) {
                     this.enabledRules = s.enabledRules;
-                    // Strip any rules that no longer exist (e.g. SIZE was removed)
                     const validRules = Object.keys(this.enabledRules).filter(r => r in {PHYSICAL:1,MEANING:1,SEMANTIC:1,SYNONYMS:1,ANTONYMS:1,COLOR:1,COLORNAME:1,PARITY:1,MODULO3:1,PRIME:1,CROSSSUM:1,DIVISIBLE5:1,GREATER10:1});
                     const cleaned = {};
                     validRules.forEach(r=>{ cleaned[r]=this.enabledRules[r]; });
@@ -1637,15 +1777,16 @@ class GameState {
                 this.rapidFireMode = s.rapidFireMode||false;
                 this.rapidFireTrials = s.rapidFireTrials||1;
                 this.warmUpMode = s.warmUpMode||false;
-                this.resultsDelay = s.resultsDelay!==undefined ? s.resultsDelay : 1.5;
-                this.noMercyMode = s.noMercyMode||false;
-                this.noMercyWindow = s.noMercyWindow||400;
+                this.tutorialMode = s.tutorialMode||false;
                 this.soundEffects = s.soundEffects!==undefined?s.soundEffects:true;
                 this.matchPercentage = s.matchPercentage!==undefined?s.matchPercentage:50;
-                this.romanNumerals = s.romanNumerals||false;
+                this.romanNumerals = s.romanNumerals!==undefined?s.romanNumerals:true;
                 this.dailyGoal = s.dailyGoal||0;
                 this.speechRate = s.speechRate!==undefined ? s.speechRate : 1.5;
                 this.soundTheme = s.soundTheme || 'soft';
+                this.microAdaptMode = s.microAdaptMode||false;
+                this.microAdaptCorrect = s.microAdaptCorrect!==undefined?s.microAdaptCorrect:3;
+                this.microAdaptIncorrect = s.microAdaptIncorrect!==undefined?s.microAdaptIncorrect:5;
             }
         } catch(e) { console.error('Load failed:', e); }
     }
@@ -1703,12 +1844,13 @@ class GameState {
 
     // Export / Import
     exportSettings() {
-        const keys = ['numberRange','showErrors','fixationDuration','feedbackDuration',
+        const keys = ['numberRange','showErrors','fixationDuration',
             'inverseMode','saccadicMode','saccadicBandwidth','saccadicRandomize','saccadicFontSize',
+            'fixationDotEnabled','fixationDotColor','fixationDotSize','fixationDotPulse','fixationDotPulseRate',
             'contentMode','difficultyMode','customTime','enabledRules','enabledLanguages',
-            'ruleTimeOffsets','rapidFireMode','rapidFireTrials','warmUpMode',
-            'noMercyMode','noMercyWindow','soundEffects',
-            'matchPercentage','romanNumerals','dailyGoal','speechRate','soundTheme'];
+            'ruleTimeOffsets','rapidFireMode','rapidFireTrials','warmUpMode','tutorialMode',
+            'soundEffects','matchPercentage','romanNumerals','dailyGoal','speechRate','soundTheme',
+            'microAdaptMode','microAdaptCorrect','microAdaptIncorrect'];
         const obj = {};
         keys.forEach(k=>{ obj[k]=this[k]; });
         return btoa(JSON.stringify(obj));
@@ -1725,6 +1867,28 @@ class GameState {
 }
 
 // ─── Trial Generator ───────────────────────────────────────────────────────
+
+// ─── TrialGenerator ──────────────────────────────────────────────────────────
+// generateTrial() retries _generate() up to 10× (to handle null returns from
+// same-word guards or empty pools) then falls back to a guaranteed simple trial.
+//
+// recentKeys: last-3 dedup queue — prevents the same word/number combo appearing
+// on back-to-back trials (key = "{word1}|{word2}" or "{num1}|{num2}|{rule}").
+//
+// 50/50 BALANCE (critical design):
+//   Word rules (SEMANTIC, SYNONYMS, ANTONYMS, COLORNAME): _generate() splits into
+//   matchPool and nonMatchPool, flips a coin to decide which pool to use, then
+//   draws one pair. This guarantees 50/50 regardless of pool size asymmetry.
+//   Number rules: isMatch = Math.random() < matchChance (from settings, default 50%).
+//
+// Subset filtering (tricky/standard):
+//   ruleSubsets[rule].standard controls non-tricky pairs.
+//   ruleSubsets[rule].tricky controls tricky-tagged pairs.
+//   Applied separately to match and non-match pools.
+//
+// Same-display guard: after picking number formats, if both formatted strings
+//   are identical (e.g. "Three — Three"), the code forces different formats
+//   (for match trials) or a different number (for non-match trials).
 class TrialGenerator {
     constructor(state) { this.state = state; this.recentKeys = []; }
 
@@ -1767,20 +1931,28 @@ class TrialGenerator {
         }
 
         if (useColorName) {
-            const subsets = this.state.ruleSubsets.COLORNAME||{standard:true,tricky:true};
-            const pool = COLORNAME_PAIRS.filter(p => p.isColorMatch || (!p.tricky && subsets.standard) || (p.tricky && subsets.tricky));
-            const pair = pool.length ? pool[Math.floor(Math.random()*pool.length)] : COLORNAME_PAIRS[0];
+            const subsets = this.state.ruleSubsets.COLORNAME||{standard:true,tricky:false};
+            const matchPool = COLORNAME_PAIRS.filter(p => p.isColorMatch);
+            const nonMatchPool = COLORNAME_PAIRS.filter(p => !p.isColorMatch && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
+            const useMatch = Math.random()<0.5;
+            const pool = (useMatch ? matchPool : nonMatchPool);
+            if(!pool.length) return null;
+            const pair = pool[Math.floor(Math.random()*pool.length)];
             const swap=Math.random()<0.5;
             const w1=swap?pair.word2:pair.word1, w2=swap?pair.word1:pair.word2;
-            if(w1===w2) return null; // same word both sides — let generateTrial retry
+            if(w1===w2) return null;
             return { rule, word1:w1, word2:w2,
                 isWordPair:true, isSynonyms:false, isAntonyms:false, isColorName:true,
                 isMatch:pair.isColorMatch, correctAnswer:pair.isColorMatch?'j':'f',
                 level:this.state.currentLevel, timestamp:Date.now(), useInverse:false, invertFirst:false };
         } else if (useAntonyms) {
-            const subsets = this.state.ruleSubsets.ANTONYMS||{standard:true,tricky:true};
-            const pool = ANTONYMS_PAIRS.filter(p => p.isAntonym || (!p.tricky && subsets.standard) || (p.tricky && subsets.tricky));
-            const pair = pool.length ? pool[Math.floor(Math.random()*pool.length)] : ANTONYMS_PAIRS[0];
+            const subsets = this.state.ruleSubsets.ANTONYMS||{standard:true,tricky:false};
+            const matchPool = ANTONYMS_PAIRS.filter(p => p.isAntonym && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
+            const nonMatchPool = ANTONYMS_PAIRS.filter(p => !p.isAntonym && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
+            const useMatch = Math.random()<0.5;
+            const pool = (useMatch ? matchPool : nonMatchPool);
+            if(!pool.length) return null;
+            const pair = pool[Math.floor(Math.random()*pool.length)];
             const swap=Math.random()<0.5;
             const w1=swap?pair.word2:pair.word1, w2=swap?pair.word1:pair.word2;
             if(w1===w2) return null;
@@ -1789,9 +1961,13 @@ class TrialGenerator {
                 isMatch:pair.isAntonym, correctAnswer:pair.isAntonym?'j':'f',
                 level:this.state.currentLevel, timestamp:Date.now(), useInverse:false, invertFirst:false };
         } else if (useSynonyms) {
-            const subsets = this.state.ruleSubsets.SYNONYMS||{standard:true,tricky:true};
-            const pool = SYNONYMS_PAIRS.filter(p => p.isSynonym || (!p.tricky && subsets.standard) || (p.tricky && subsets.tricky));
-            const pair = pool.length ? pool[Math.floor(Math.random()*pool.length)] : SYNONYMS_PAIRS[0];
+            const subsets = this.state.ruleSubsets.SYNONYMS||{standard:true,tricky:false};
+            const matchPool = SYNONYMS_PAIRS.filter(p => p.isSynonym && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
+            const nonMatchPool = SYNONYMS_PAIRS.filter(p => !p.isSynonym && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
+            const useMatch = Math.random()<0.5;
+            const pool = (useMatch ? matchPool : nonMatchPool);
+            if(!pool.length) return null;
+            const pair = pool[Math.floor(Math.random()*pool.length)];
             const swap=Math.random()<0.5;
             const w1=swap?pair.word2:pair.word1, w2=swap?pair.word1:pair.word2;
             if(w1===w2) return null;
@@ -1800,10 +1976,14 @@ class TrialGenerator {
                 isMatch:pair.isSynonym, correctAnswer:pair.isSynonym?'j':'f',
                 level:this.state.currentLevel, timestamp:Date.now(), useInverse:false, invertFirst:false };
         } else if (useWordPairs) {
-            const subsets = this.state.ruleSubsets.SEMANTIC||{standard:true,tricky:true};
-            const pool = WORD_PAIRS.filter(p => p.related || (!p.tricky && subsets.standard) || (p.tricky && subsets.tricky));
-            const pair = pool.length ? pool[Math.floor(Math.random()*pool.length)] : WORD_PAIRS[0];
+            const subsets = this.state.ruleSubsets.SEMANTIC||{standard:true,tricky:false};
+            const matchPool = WORD_PAIRS.filter(p => p.related && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
+            const nonMatchPool = WORD_PAIRS.filter(p => !p.related && (subsets.tricky || !p.tricky) && (subsets.standard || p.tricky));
             const useInverse=this.state.inverseMode&&Math.random()<0.5;
+            const useMatch = Math.random()<0.5;
+            const pool = (useMatch ? matchPool : nonMatchPool);
+            if(!pool.length) return null;
+            const pair = pool[Math.floor(Math.random()*pool.length)];
             const swap=Math.random()<0.5;
             const w1=swap?pair.word2:pair.word1, w2=swap?pair.word1:pair.word2;
             if(w1===w2) return null;
@@ -1974,6 +2154,36 @@ class TrialGenerator {
 }
 
 // ─── UI Controller ─────────────────────────────────────────────────────────
+
+// ─── UIController ────────────────────────────────────────────────────────────
+// Owns all DOM manipulation. Receives state/sounds/speech in constructor.
+// this.el  — cached DOM element references (populated in constructor)
+// this.screens — {welcome, task, results, history} screen divs
+//
+// KEY METHODS:
+//   showScreen(name)         — activates a screen, hides others, hides dot/overlay
+//   displayRule(rule)        — renders rule card in stimulus container (awaiting Space)
+//   displayStimulus(trial)   — renders the actual stimulus pair (text or positioned)
+//   showFixation()           — renders + cross; clears stimulus container
+//   showFeedback(isCorrect) — shows ✓/✗ toast; returns Promise that resolves
+//                              after a fixed 350ms
+//   updateTrialInfo()        — updates trial counter + error count display
+//   updateRuleBanner(rule)   — updates the sticky rule banner during gameplay
+//   _saccadicPosition()      — computes a random x,y within the spawn band
+//                              (edge-biased by default; random if saccadicRandomize)
+//
+// SACCADIC POSITIONING:
+//   Band width = saccadicBandwidth% of the usable screen (after safe margins).
+//   Safe margins account for stimulus text width (fontSize * multiplier) to
+//   prevent clipping at screen edges.
+//   Edge-bias: picks one of 4 edge zones (top/bottom/left/right outer 25%).
+//   Randomize mode: uniform random anywhere within band.
+//
+// STIMULUS CONTAINER:
+//   Classic mode: uses .stimulus-container (centred in task screen).
+//   Saccadic mode: uses #saccadicStimulusContent (position:absolute full-screen).
+//   showFeedback() clears the container (cont.innerHTML='') at its start —
+//   this is intentional (removes the stimulus while feedback is shown).
 class UIController {
     constructor(state, sounds, speech) {
         this.state=state; this.sounds=sounds; this.speech=speech;
@@ -1988,8 +2198,8 @@ class UIController {
 
     _cache() {
         const ids=['modeDescription','multiModeRules','numberRange','showErrors',
-            'fixationDuration','fixationDurationValue','feedbackDuration','feedbackDurationValue',
-            'warmUpMode','rapidFireMode','rapidFireSettings','rapidFireTrials','rapidFireTrialsValue',
+            'fixationDuration','fixationDurationValue',
+            'warmUpMode','tutorialMode','rapidFireMode','rapidFireSettings','rapidFireTrials','rapidFireTrialsValue',
             'inverseMode','saccadicMode','saccadicSettings','saccadicFontSize','saccadicFontSizeValue',
             'manualSettings','manualLevel','customSettings','customTime','customTimeValue',
             'currentDifficultyDisplay','sessionRoundsDisplay','sessionCompleteMessage','sessionProgressFill',
@@ -2242,7 +2452,7 @@ class UIController {
     }
     showWaitingForSpace() { /* rule already shown by displayRule */ }
 
-    showFeedback(isCorrect, isTimeout=false, _unused=false, noMercyPenalty=false) {
+    showFeedback(isCorrect, isMissed=false) {
         const isSacc = this.state.saccadicMode;
         const fb   = isSacc ? this.el.saccadicFeedbackDisplay : this.el.feedbackDisplay;
         const wrap = isSacc ? this.el.saccadicFeedbackWrap    : this.el.feedbackWrap;
@@ -2251,15 +2461,12 @@ class UIController {
         return new Promise(resolve => {
             if(!fb || !wrap) { resolve(); return; }
             let cls, txt;
-            if(noMercyPenalty) {
-                cls='incorrect'; txt='😈 No Mercy!';
-                if(this.sounds.enabled) this.sounds.playIncorrect();
-            } else if(isTimeout) {
-                cls='timeout'; txt='⏱ Too Slow';
-                if(this.sounds.enabled) this.sounds.playTimeout();
-            } else if(isCorrect) {
+            if(isCorrect) {
                 cls='correct'; txt='✓ Correct';
                 if(this.sounds.enabled) this.sounds.playCorrect();
+            } else if(isMissed) {
+                cls='incorrect'; txt='✗ Missed';
+                if(this.sounds.enabled) this.sounds.playIncorrect();
             } else {
                 cls='incorrect'; txt='✗ Incorrect';
                 if(this.sounds.enabled) this.sounds.playIncorrect();
@@ -2267,7 +2474,7 @@ class UIController {
             fb.className = 'feedback-toast ' + cls;
             fb.textContent = txt;
             wrap.classList.remove('hidden');
-            setTimeout(()=>{ wrap.classList.add('hidden'); resolve(); }, this.state.feedbackDuration);
+            setTimeout(()=>{ wrap.classList.add('hidden'); resolve(); }, 350);
         });
     }
 
@@ -2326,6 +2533,38 @@ class UIController {
 }
 
 // ─── Game Controller ───────────────────────────────────────────────────────
+
+// ─── GameController ──────────────────────────────────────────────────────────
+// Top-level orchestrator. Instantiated once on DOMContentLoaded.
+//
+// INSTANCE FLAGS (beyond GameState):
+//   _trialToken       int — incremented each startTrialSequence(). Used to
+//                     invalidate any stale async callbacks if session changes.
+//   _spaceEnabled     bool — THE ONLY gate for Space during gameplay.
+//                     Set true: only inside nextTrial() after rule screen shown.
+//                     Set false: as FIRST LINE of startTrialSequence().
+//                     Touch buttons and keyboard both check this flag.
+//   _trialSequenceRunning bool — mutex preventing double-entry to startTrialSequence
+//   _spaceEnabled is also used for the "Start Training (Space)" shortcut on the
+//   welcome screen — the welcome screen Space handler is separate from task Space.
+//
+// TRIAL LIFECYCLE:
+//   startSession() → resets all flags, calls nextTrial()
+//   nextTrial()    → increments currentTrial; if >32 calls endSession();
+//                    shows rule screen; sets _spaceEnabled=true
+//   startTrialSequence() → [ASYNC] fixation sleep → displayStimulus → awaits F/J
+//   handleResponse(key) → [ASYNC] computes result; shows feedback; sleeps 300ms; calls nextTrial()
+//   endSession()   → saves history; hides dot; showResults
+//
+// KEYBOARD HANDLING (handleKeyPress):
+//   Priority order (highest first):
+//   1. Alt key → toggle saccadic info overlay (only during task)
+//   2. Space on welcome → startSession()
+//   3. Results screen (Space/ESC) → handled directly
+//   4. keyboardEnabled gate → blocks everything else during transitions
+//   5. ESC on task → exitSession()
+//   6. Space on task AND _spaceEnabled → startTrialSequence()
+//   7. F/J AND keyboardEnabled → handleResponse(key)
 class GameController {
     constructor() {
         this.state=new GameState();
@@ -2337,11 +2576,8 @@ class GameController {
         this._sessionTimerInterval=null;
         this._sessionElapsed=0;
         this._trialToken=0;
-        this._responseId=0;
         this._spaceEnabled=false;
         this._trialSequenceRunning=false;
-        this._noMercyTimeout=null;
-        this._resultsUnlockTime=0;
         this.initialize();
     }
 
@@ -2541,22 +2777,9 @@ class GameController {
         set('numberRange',s.numberRange);
         set('showErrors',s.showErrors,'checked');
         set('fixationDuration',s.fixationDuration); set('fixationDurationValue',s.fixationDuration,'textContent');
-        set('feedbackDuration',s.feedbackDuration); set('feedbackDurationValue',s.feedbackDuration,'textContent');
         set('inverseMode',s.inverseMode,'checked');
         set('warmUpMode',s.warmUpMode,'checked');
-        const rdSlider=document.getElementById('resultsDelaySlider');
-        const rdVal=document.getElementById('resultsDelayValue');
-        if(rdSlider) rdSlider.value=s.resultsDelay!==undefined?s.resultsDelay:1.5;
-        if(rdVal) rdVal.textContent=(s.resultsDelay!==undefined?s.resultsDelay:1.5).toFixed(1);
-        set('noMercyMode',s.noMercyMode,'checked');
-        const nmWinEl=document.getElementById('noMercyWindow');
-        const nmWinVal=document.getElementById('noMercyWindowValue');
-        if(nmWinEl) nmWinEl.value=s.noMercyWindow||400;
-        if(nmWinVal) nmWinVal.textContent=(s.noMercyWindow||200)+'ms';
-        const noMercySettingsEl=document.getElementById('noMercySettings');
-        if(noMercySettingsEl) noMercySettingsEl.classList.toggle('hidden',!s.noMercyMode);
-        const noMercyInd=document.getElementById('noMercyIndicator');
-        if(noMercyInd) noMercyInd.classList.toggle('hidden',!s.noMercyMode);
+        set('tutorialMode',s.tutorialMode,'checked');
         set('rapidFireMode',s.rapidFireMode,'checked');
         set('rapidFireTrials',s.rapidFireTrials); set('rapidFireTrialsValue',s.rapidFireTrials,'textContent');
         set('saccadicMode',s.saccadicMode,'checked');
@@ -2605,6 +2828,10 @@ class GameController {
         if(fdEnabled) fdEnabled.checked = s.fixationDotEnabled;
         if(fdSettings) fdSettings.classList.toggle('hidden', !s.fixationDotEnabled);
         if(fdColor) fdColor.value = s.fixationDotColor||'#ff0000';
+        const fdSize = document.getElementById('fixationDotSize');
+        const fdSizeVal = document.getElementById('fixationDotSizeValue');
+        if(fdSize) fdSize.value = s.fixationDotSize||12;
+        if(fdSizeVal) fdSizeVal.textContent = s.fixationDotSize||12;
         if(fdPulse) fdPulse.checked = s.fixationDotPulse;
         if(fdPulseSettings) fdPulseSettings.classList.toggle('hidden', !s.fixationDotPulse);
         if(fdPulseRate) fdPulseRate.value = s.fixationDotPulseRate||1.0;
@@ -2623,6 +2850,21 @@ class GameController {
             if(el) el.value = s.ruleTimeOffsets[rule];
             if(lbl) lbl.textContent = (s.ruleTimeOffsets[rule]>=0?'+':'')+s.ruleTimeOffsets[rule]+'ms';
         });
+
+        // Micro-adaptation
+        const maCheck = document.getElementById('microAdaptMode');
+        const maSettings = document.getElementById('microAdaptSettings');
+        const maCorrectEl = document.getElementById('microAdaptCorrect');
+        const maCorrectVal = document.getElementById('microAdaptCorrectValue');
+        const maIncorrectEl = document.getElementById('microAdaptIncorrect');
+        const maIncorrectVal = document.getElementById('microAdaptIncorrectValue');
+        if(maCheck) maCheck.checked = s.microAdaptMode;
+        if(maSettings) maSettings.classList.toggle('hidden', !s.microAdaptMode);
+        if(maCorrectEl) maCorrectEl.value = s.microAdaptCorrect;
+        if(maCorrectVal) maCorrectVal.textContent = s.microAdaptCorrect;
+        if(maIncorrectEl) maIncorrectEl.value = s.microAdaptIncorrect;
+        if(maIncorrectVal) maIncorrectVal.textContent = s.microAdaptIncorrect;
+        this._updateMicroAdaptDisplay();
     }
 
     _setupListeners() {
@@ -2712,8 +2954,14 @@ class GameController {
         });
         wire('showErrors','showErrors',null); document.getElementById('showErrors')&&document.getElementById('showErrors').addEventListener('change',e=>{ this.state.showErrors=e.target.checked; this.state.saveToStorage(); });
         wire('fixationDuration','fixationDuration',parseInt,'fixationDurationValue');
-        wire('feedbackDuration','feedbackDuration',parseInt,'feedbackDurationValue');
-        wire('customTime','customTime',parseInt,'customTimeValue');
+        document.getElementById('customTime')?.addEventListener('input',e=>{
+            const v=parseInt(e.target.value);
+            this.state.customTime=v;
+            const lbl=document.getElementById('customTimeValue'); if(lbl) lbl.textContent=v;
+            try { localStorage.setItem('posner_customTime', String(v)); } catch(ex){}
+            this.state.saveToStorage();
+            this._updateMicroAdaptDisplay();
+        });
         wire('saccadicFontSize','saccadicFontSize',parseInt,'saccadicFontSizeValue');
         wire('matchPercentage','matchPercentage',parseInt,'matchPercentageValue');
 
@@ -2730,12 +2978,7 @@ class GameController {
         const wireCheck=(id,stateKey,cb)=>{ const el=document.getElementById(id); if(!el)return; el.addEventListener('change',e=>{ this.state[stateKey]=e.target.checked; if(cb)cb(e.target.checked); this.state.saveToStorage(); }); };
         wireCheck('inverseMode','inverseMode');
         wireCheck('warmUpMode','warmUpMode');
-        document.getElementById('resultsDelaySlider')?.addEventListener('input',e=>{
-            const v=parseFloat(e.target.value);
-            this.state.resultsDelay=v;
-            const lbl=document.getElementById('resultsDelayValue'); if(lbl) lbl.textContent=v.toFixed(1);
-            this.state.saveToStorage();
-        });
+        wireCheck('tutorialMode','tutorialMode');
         wireCheck('romanNumerals','romanNumerals');
         wireCheck('soundEffects','soundEffects',v=>{ this.sounds.enabled=v; });
         wireCheck('rapidFireMode','rapidFireMode',v=>{ this.ui.el.rapidFireSettings&&this.ui.el.rapidFireSettings.classList.toggle('hidden',!v); });
@@ -2754,6 +2997,13 @@ class GameController {
             this.state.saveToStorage();
             this._applyFixationDot();
         });
+        document.getElementById('fixationDotSize')?.addEventListener('input',e=>{
+            const v=parseInt(e.target.value);
+            this.state.fixationDotSize=v;
+            const lbl=document.getElementById('fixationDotSizeValue'); if(lbl) lbl.textContent=v;
+            this.state.saveToStorage();
+            this._applyFixationDot();
+        });
         document.getElementById('fixationDotPulseRate')?.addEventListener('input',e=>{
             const v=parseFloat(e.target.value);
             this.state.fixationDotPulseRate=v;
@@ -2761,17 +3011,29 @@ class GameController {
             this.state.saveToStorage();
             this._applyFixationDot();
         });
-        wireCheck('noMercyMode','noMercyMode',v=>{
-            const s=document.getElementById('noMercySettings'); if(s) s.classList.toggle('hidden',!v);
-            const ind=document.getElementById('noMercyIndicator'); if(ind) ind.classList.toggle('hidden',!v);
+
+        // Micro-adaptation
+        wireCheck('microAdaptMode','microAdaptMode',v=>{
+            const s=document.getElementById('microAdaptSettings'); if(s) s.classList.toggle('hidden',!v);
+            this._updateMicroAdaptDisplay();
         });
-        document.getElementById('noMercyWindow')?.addEventListener('input',e=>{
+        document.getElementById('microAdaptCorrect')?.addEventListener('input',e=>{
             const v=parseInt(e.target.value);
-            this.state.noMercyWindow=v;
-            const lbl=document.getElementById('noMercyWindowValue'); if(lbl) lbl.textContent=v+'ms';
+            this.state.microAdaptCorrect=v;
+            const lbl=document.getElementById('microAdaptCorrectValue'); if(lbl) lbl.textContent=v;
             this.state.saveToStorage();
         });
-
+        document.getElementById('microAdaptIncorrect')?.addEventListener('input',e=>{
+            const v=parseInt(e.target.value);
+            this.state.microAdaptIncorrect=v;
+            const lbl=document.getElementById('microAdaptIncorrectValue'); if(lbl) lbl.textContent=v;
+            this.state.saveToStorage();
+        });
+        document.getElementById('microAdaptReset')?.addEventListener('click',()=>{
+            this.state.microAdaptCurrentMs = this.state.customTime;
+            try { localStorage.setItem('posner_microAdaptMs', String(this.state.microAdaptCurrentMs)); } catch(e){}
+            this._updateMicroAdaptDisplay();
+        });
         // Touch response buttons (mobile)
         const touchBtn=(id,action)=>{
             const el=document.getElementById(id); if(!el)return;
@@ -2838,11 +3100,10 @@ class GameController {
         const btn=(id,fn)=>{ const el=document.getElementById(id); if(el) el.addEventListener('click',fn); };
         btn('previewCorrect',  ()=>{ this.sounds.enabled=true; this.sounds.playCorrect();   });
         btn('previewIncorrect',()=>{ this.sounds.enabled=true; this.sounds.playIncorrect(); });
-        btn('previewTimeout',  ()=>{ this.sounds.enabled=true; this.sounds.playTimeout();   });
         btn('startButton',()=>this.startSession());
         btn('exitButton',()=>this.exitSession());
-        btn('returnToMenu',()=>{ if(!this.ui.screens.results.classList.contains('active') || Date.now()>=this._resultsUnlockTime) this.returnToMenu(); });
-        btn('newSession',()=>{ if(Date.now() >= this._resultsUnlockTime) this.startSession(); });
+        btn('returnToMenu',()=>this.returnToMenu());
+        btn('newSession',()=>this.startSession());
         btn('viewHistory',()=>this.showHistory());
         btn('backToWelcome',()=>this.returnToMenu());
         btn('resetProgress',()=>this.resetProgress());
@@ -2881,11 +3142,25 @@ class GameController {
         // Manual/custom settings
         if(this.ui.el.manualSettings) this.ui.el.manualSettings.classList.toggle('hidden', this.state.difficultyMode!=='manual');
         if(this.ui.el.customSettings) this.ui.el.customSettings.classList.toggle('hidden', this.state.difficultyMode!=='custom');
+        // Show micro-adapt sub-settings only when custom ms AND microAdaptMode both active
+        const maSettings = document.getElementById('microAdaptSettings');
+        if(maSettings) maSettings.classList.toggle('hidden', !this.state.microAdaptMode);
+        this._updateMicroAdaptDisplay();
         // Hide "Current Level" stat in session progress when custom ms mode active
         const clBox = document.getElementById('currentLevelBox');
         if(clBox) clBox.style.display = this.state.difficultyMode==='custom' ? 'none' : '';
         // modeDescription is now unused but kept for safety
         if(this.ui.el.modeDescription) this.ui.el.modeDescription.textContent='';
+    }
+
+    _updateMicroAdaptDisplay() {
+        const el = document.getElementById('microAdaptCurrentDisplay');
+        if(!el) return;
+        if(!this.state.microAdaptMode || this.state.difficultyMode !== 'custom') { el.textContent = '—'; return; }
+        const live = this.state.microAdaptCurrentMs !== null
+            ? Math.round(this.state.microAdaptCurrentMs)
+            : this.state.customTime;
+        el.textContent = live;
     }
 
     _applyFixationDot() {
@@ -2894,7 +3169,8 @@ class GameController {
         const active = this.state.fixationDotEnabled && this.state.saccadicMode && this.ui.screens.task.classList.contains('active');
         dot.style.display = active ? 'block' : 'none';
         dot.style.background = this.state.fixationDotColor || '#ff0000';
-        // Apply pulse animation with custom rate via CSS variable
+        const sz = (this.state.fixationDotSize || 12) + 'px';
+        dot.style.width = sz; dot.style.height = sz;
         if(active && this.state.fixationDotPulse) {
             const rate = (this.state.fixationDotPulseRate || 1.0) + 's';
             dot.style.animationDuration = rate;
@@ -2908,7 +3184,6 @@ class GameController {
         if(this.state.difficultyMode==='manual'&&this.ui.el.manualLevel) this.state.currentLevel=parseFloat(this.ui.el.manualLevel.value);
         this.state.reset();
         this._trialToken = 0;
-        this._responseId = 0;
         this._spaceEnabled = false;
         this._trialSequenceRunning = false;
         this.trialGen.recentKeys = [];
@@ -2938,159 +3213,124 @@ class GameController {
         } else {
             this.ui.displayRule(this.currentTrial.rule);
             this.ui.showWaitingForSpace();
-            this.state.awaitingResponse=false;
             this.state.keyboardEnabled=true;
             this._spaceEnabled=true; // THE ONLY PLACE Space is ever enabled
         }
     }
 
     async startTrialSequence() {
-        // Disable Space immediately — it must not fire again until the next rule screen
-        this._spaceEnabled=false;
-        // Prevent double-fire
+        this._spaceEnabled = false;
         if(this._trialSequenceRunning) return;
-        this._trialSequenceRunning=true;
-        this._responseId++; // invalidate any stale timeout from previous trial
-        this.state.keyboardEnabled=false;
+        this._trialSequenceRunning = true;
+        this.state.keyboardEnabled = false;
+        this.state.awaitingResponse = false;
+
+        // Mint trial token — any stale timeout from a previous trial checks this first
         const token = ++this._trialToken;
+
         this.ui.showFixation();
         await this._sleep(this.state.fixationDuration);
-        if(token !== this._trialToken) { this._trialSequenceRunning=false; return; }
+
+        // Abort if session changed while sleeping (e.g. exitSession called)
+        if(token !== this._trialToken) { this._trialSequenceRunning = false; return; }
+
         this.ui.displayStimulus(this.currentTrial);
-        this.state.awaitingResponse=true;
-        this.state.currentTrialStartTime=Date.now();
-        this.state.keyboardEnabled=true;
-        this._trialSequenceRunning=false;
-        const baseMs = this.state.difficultyMode==='custom'
-            ? this.state.customTime
-            : DIFFICULTY_LEVELS.find(l=>l.level===this.state.currentLevel)?.duration||600;
-        const ruleOffset = (this.state.contentMode==='multi' && this.state.ruleTimeOffsets)
-            ? (this.state.ruleTimeOffsets[this.currentTrial.rule]||0) : 0;
-        const window_ms = Math.max(50, baseMs + ruleOffset);
-        this.state.clearResponseTimeout();
-        const timeoutToken = this._trialToken;
-        const timeoutRespId = this._responseId;
-        this.state.responseTimeout=setTimeout(()=>{
-            // Only fire if still the same trial AND no response has been claimed yet
-            if(timeoutToken === this._trialToken && timeoutRespId === this._responseId && this.state.awaitingResponse) {
-                this.handleResponse(null);
+        this.state.currentTrialStartTime = Date.now();
+        this.state.awaitingResponse = true;
+        this.state.keyboardEnabled = true;
+        this._trialSequenceRunning = false;
+
+        // Calculate response window from difficulty settings
+        let baseMs;
+        if(this.state.difficultyMode === 'custom') {
+            // In micro-adapt mode use the live window (persisted), otherwise use the setting
+            if(this.state.microAdaptMode) {
+                if(this.state.microAdaptCurrentMs === null) this.state.microAdaptCurrentMs = this.state.customTime;
+                baseMs = this.state.microAdaptCurrentMs;
+            } else {
+                baseMs = this.state.customTime;
             }
-        }, window_ms);
+        } else {
+            baseMs = DIFFICULTY_LEVELS.find(l => l.level === this.state.currentLevel)?.duration || 600;
+        }
+        const ruleOffset = (this.state.contentMode === 'multi' && this.state.ruleTimeOffsets)
+            ? (this.state.ruleTimeOffsets[this.currentTrial.rule] || 0) : 0;
+        const windowMs = Math.max(50, baseMs + ruleOffset);
+
+        // Stimulus timeout — skipped entirely in tutorial mode
+        if(!this.state.tutorialMode) {
+            setTimeout(() => {
+                if(token === this._trialToken && this.state.awaitingResponse) {
+                    this.handleResponse(null); // null = missed (no key pressed in time)
+                }
+            }, windowMs);
+        }
     }
 
     async handleResponse(key) {
+        // Atomically claim this trial — must be first line, before any async work.
+        // Prevents the timeout and a keypress from both processing the same trial.
         if(!this.state.awaitingResponse) return;
-        // Atomic guard: stamp this response claim; any concurrent call with a different stamp is stale
-        const responseId = ++this._responseId;
-        // Claim this trial immediately — prevents any stale timeout from also firing
-        this.state.awaitingResponse=false;
-        this.state.keyboardEnabled=false;
-        this.state.clearResponseTimeout();
+        this.state.awaitingResponse = false;
+        this.state.keyboardEnabled = false;
         if(this.speech) this.speech.cancel();
 
-        // Clear any pending No Mercy watch
-        if(this._noMercyTimeout) { clearTimeout(this._noMercyTimeout); this._noMercyTimeout=null; }
+        const rt = Date.now() - this.state.currentTrialStartTime;
+        const isMissed = (key === null);
 
-        const rt=Date.now()-this.state.currentTrialStartTime;
-        const isTimeout=(key===null);
+        // Compute correct answer
         let correctAnswer;
-
         if(this.currentTrial.isWordPair) {
-            correctAnswer=this.currentTrial.correctAnswer;
+            correctAnswer = this.currentTrial.correctAnswer;
         } else {
-            let n1=this.currentTrial.number1, n2=this.currentTrial.number2;
-            if(this.currentTrial.useInverse){ if(this.currentTrial.invertFirst)n1=this.state.numberRange-n1; else n2=this.state.numberRange-n2; }
-            const rule=this.currentTrial.rule;
-            if(rule==='PARITY') correctAnswer=(n1%2)===(n2%2)?'j':'f';
-            else if(rule==='MODULO3') correctAnswer=(n1%3)===(n2%3)?'j':'f';
-            else if(rule==='PRIME') correctAnswer=(isPrime(n1)&&isPrime(n2))?'j':'f';
-            else if(rule==='CROSSSUM') correctAnswer=getCrossSum(n1)===getCrossSum(n2)?'j':'f';
-            else if(rule==='DIVISIBLE5') correctAnswer=(n1%5===0&&n2%5===0)?'j':'f';
-            else if(rule==='GREATER10') correctAnswer=(n1>10&&n2>10)?'j':'f';
-            else if(rule==='MEANING') {
-                // Same numeric value? (useInverse may have changed the displayed values)
-                correctAnswer = n1===n2 ? 'j' : 'f';
-            } else if(rule==='PHYSICAL') {
-                // Same display format? format1/format2 don't change with useInverse
-                correctAnswer = this.currentTrial.format1===this.currentTrial.format2 ? 'j' : 'f';
-            } else {
-                correctAnswer=this.currentTrial.correctAnswer;
+            let n1 = this.currentTrial.number1, n2 = this.currentTrial.number2;
+            if(this.currentTrial.useInverse) {
+                if(this.currentTrial.invertFirst) n1 = this.state.numberRange - n1;
+                else n2 = this.state.numberRange - n2;
             }
+            const rule = this.currentTrial.rule;
+            if(rule === 'PARITY') correctAnswer = (n1%2) === (n2%2) ? 'j' : 'f';
+            else if(rule === 'MODULO3') correctAnswer = (n1%3) === (n2%3) ? 'j' : 'f';
+            else if(rule === 'PRIME') correctAnswer = (isPrime(n1) && isPrime(n2)) ? 'j' : 'f';
+            else if(rule === 'CROSSSUM') correctAnswer = getCrossSum(n1) === getCrossSum(n2) ? 'j' : 'f';
+            else if(rule === 'DIVISIBLE5') correctAnswer = (n1%5===0 && n2%5===0) ? 'j' : 'f';
+            else if(rule === 'GREATER10') correctAnswer = (n1>10 && n2>10) ? 'j' : 'f';
+            else if(rule === 'MEANING') correctAnswer = n1 === n2 ? 'j' : 'f';
+            else if(rule === 'PHYSICAL') correctAnswer = this.currentTrial.format1 === this.currentTrial.format2 ? 'j' : 'f';
+            else correctAnswer = this.currentTrial.correctAnswer;
         }
 
-        const firstWasCorrect = !isTimeout && key===correctAnswer;
-        const isWarmUp=this.state.warmUpMode&&this.state.currentTrial===1;
+        const isCorrect = !isMissed && key === correctAnswer;
+        const isWarmUp = this.state.warmUpMode && this.state.currentTrial === 1;
 
-        // ── No Mercy mode: watch for a second opposite keypress within the grace window ──
-        if(this.state.noMercyMode && firstWasCorrect && !isTimeout) {
-            const oppositeKey = key==='j'?'f':'j';
-            const gracePeriod = this.state.noMercyWindow||400;
+        this.currentTrial.response = key;
+        this.currentTrial.isCorrect = isCorrect;
+        this.currentTrial.responseTime = rt;
+        this.currentTrial.actualCorrectAnswer = correctAnswer;
 
-            // Show normal correct feedback — player sees nothing unusual
-            await this.ui.showFeedback(true, false);
-            this.state.keyboardEnabled=true; // briefly re-enable to catch second press
+        if(isCorrect) {
+            this.state.correctCount++;
+            this.state.consecutiveFailures = 0;
+            this.state.correctReactionTime += rt;
+        } else if(!isWarmUp) {
+            this.state.errorCount++;
+            this.state.consecutiveFailures++;
+        }
+        this.state.totalReactionTime += rt;
 
-            await new Promise(resolve => {
-                this._noMercyTimeout = setTimeout(()=>{
-                    this._noMercyTimeout=null;
-                    document.removeEventListener('keydown', noMercyHandler);
-                    document.removeEventListener('click', touchHandler);
-                    resolve({penalised:false});
-                }, gracePeriod);
-
-                const noMercyHandler = (e)=>{
-                    if(e.key.toLowerCase()===oppositeKey && this.state.keyboardEnabled) {
-                        clearTimeout(this._noMercyTimeout); this._noMercyTimeout=null;
-                        document.removeEventListener('keydown', noMercyHandler);
-                        document.removeEventListener('click', touchHandler);
-                        resolve({penalised:true});
-                    }
-                };
-                const touchHandler = (e)=>{
-                    const btn = e.target.closest('button');
-                    if(!btn) return;
-                    const btnKey = btn.id==='touchBtnJ'?'j':(btn.id==='touchBtnF'?'f':null);
-                    if(btnKey===oppositeKey) {
-                        clearTimeout(this._noMercyTimeout); this._noMercyTimeout=null;
-                        document.removeEventListener('keydown', noMercyHandler);
-                        document.removeEventListener('click', touchHandler);
-                        resolve({penalised:true});
-                    }
-                };
-                document.addEventListener('keydown', noMercyHandler);
-                document.addEventListener('click', touchHandler);
-            }).then(async ({penalised})=>{
-                this.state.keyboardEnabled=false;
-                const isCorrect = !penalised;
-                this.currentTrial.response=key; this.currentTrial.isCorrect=isCorrect;
-                this.currentTrial.responseTime=rt; this.currentTrial.actualCorrectAnswer=correctAnswer;
-                if(isCorrect){
-                    this.state.correctCount++; this.state.consecutiveFailures=0; this.state.correctReactionTime+=rt;
-                } else if(!isWarmUp){
-                    this.state.errorCount++; this.state.consecutiveFailures++;
-                    this.ui.updateTrialInfo();
-                    await this.ui.showFeedback(false, false, false, true);
-                    await this._sleep(300);
-                    this.nextTrial();
-                    return;
-                }
-                this.state.totalReactionTime+=rt;
-                await this._sleep(300);
-                this.nextTrial();
-            });
-            return;
+        // Micro-adaptation: adjust live window after every trial
+        if(this.state.difficultyMode === 'custom' && this.state.microAdaptMode) {
+            if(this.state.microAdaptCurrentMs === null) this.state.microAdaptCurrentMs = this.state.customTime;
+            if(isCorrect) {
+                this.state.microAdaptCurrentMs = Math.max(50, this.state.microAdaptCurrentMs - this.state.microAdaptCorrect);
+            } else {
+                this.state.microAdaptCurrentMs = Math.min(3000, this.state.microAdaptCurrentMs + this.state.microAdaptIncorrect);
+            }
+            try { localStorage.setItem('posner_microAdaptMs', String(this.state.microAdaptCurrentMs)); } catch(e){}
+            this._updateMicroAdaptDisplay();
         }
 
-        // ── Normal path ──────────────────────────────────────────────────────
-        const isCorrect=firstWasCorrect;
-        this.currentTrial.response=key; this.currentTrial.isCorrect=isCorrect;
-        this.currentTrial.responseTime=rt; this.currentTrial.actualCorrectAnswer=correctAnswer;
-
-        if(isCorrect){ this.state.correctCount++; this.state.consecutiveFailures=0; this.state.correctReactionTime+=rt; }
-        else if(!isWarmUp){ this.state.errorCount++; this.state.consecutiveFailures++; }
-        this.state.totalReactionTime+=rt;
-
-        await this.ui.showFeedback(isCorrect, isTimeout);
+        await this.ui.showFeedback(isCorrect, isMissed);
         await this._sleep(300);
         this.nextTrial();
     }
@@ -3122,14 +3362,12 @@ class GameController {
         // Hide fixation dot — must not show on results screen
         const dot = document.getElementById('fixationDot');
         if(dot) dot.style.display = 'none';
-        this._resultsUnlockTime = Date.now() + (this.state.resultsDelay||1.5) * 1000;
         this.ui.showResults();
         this.ui.updateSessionCounter();
         this.ui.showScreen('results');
     }
 
     returnToMenu() {
-        this.state.clearResponseTimeout();
         if(this.speech) this.speech.cancel();
         clearInterval(this._sessionTimerInterval);
         const dot = document.getElementById('fixationDot');
@@ -3150,7 +3388,6 @@ class GameController {
     }
 
     exitSession() {
-        this.state.clearResponseTimeout();
         this._trialToken++;
         this._spaceEnabled = false;
         this._trialSequenceRunning = false;
@@ -3251,9 +3488,8 @@ class GameController {
             e.preventDefault(); this.startSession(); return;
         }
         if(this.ui.screens.results.classList.contains('active')) {
-            const unlocked = Date.now() >= this._resultsUnlockTime;
-            if(key==='escape' && unlocked){ e.preventDefault(); this.returnToMenu(); return; }
-            if(e.key===' ' && unlocked){ e.preventDefault(); this.startSession(); return; }
+            if(key==='escape'){ e.preventDefault(); this.returnToMenu(); return; }
+            if(e.key===' '){ e.preventDefault(); this.startSession(); return; }
             return; // swallow all other keys on results
         }
 
@@ -3261,6 +3497,7 @@ class GameController {
         if(key==='escape'&&this.ui.screens.task.classList.contains('active')){ e.preventDefault(); this.exitSession(); }
         // Space only fires when the rule screen is showing
         else if(key===' '&&this._spaceEnabled&&this.ui.screens.task.classList.contains('active')){ this.startTrialSequence(); }
+        // F/J only fire when the stimulus is on screen (awaitingResponse)
         else if((key==='f'||key==='j')&&this.state.awaitingResponse){ e.preventDefault(); this.handleResponse(key); }
     }
 
